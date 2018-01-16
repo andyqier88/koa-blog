@@ -1,90 +1,59 @@
-
 const Koa = require('koa');
+const path = require('path')
+const bodyParser = require('koa-bodyparser');
+const ejs = require('ejs');
+const session = require('koa-session-minimal');
+const MysqlStore = require('koa-mysql-session');
+const config = require('./config/default.js');
+const router = require('koa-router')
+    // const views = require('koa-views')
+    // const koaStatic = require('koa-static')
+const staticCache = require('koa-static-cache')
+const app = new Koa()
 
-const log = require('./log');
-const app = new Koa();
-// app.use(log())
-// app.use(( ctx ) => {
-// 	ctx.body = 'hello world!'
-// })
-// app.use( async ( ctx ) => {
-//   ctx.body = 'hello koa2'
-// })
-const Router = require('koa-router')
 
-let home = new Router()
-
-// 子路由1
-home.get('/', async ( ctx )=>{
-  let html = `
-    <ul>
-      <li><a href="/page/helloworld">/page/helloworld</a></li>
-      <li><a href="/page/404">/page/404</a></li>
-    </ul>
-  `
-  ctx.body = html
-})
-
-let page = new Router()
-page.get('/404', async ( ctx )=>{
-  ctx.body = '404 page!'
-}).get('/helloworld', async ( ctx )=>{
-  ctx.body = 'helloworld page!'
-})
-
-let router = new Router()
-router.use('/', home.routes(), home.allowedMethods())
-router.use('/page', page.routes(), page.allowedMethods())
-
-// 加载路由中间件
-app.use(router.routes()).use(router.allowedMethods())
-// 子路由2
-// let page = new Router()
-// page.get('/404', async ( ctx )=>{
-//   ctx.body = '404 page!'
-// }).get('/helloworld', async ( ctx )=>{
-//   ctx.body = 'helloworld page!'
-// })
-
-// 装载所有子路由
-// let router = new Router()
-// router.use('/', home.routes(), home.allowedMethods())
-// router.use('/page', page.routes(), page.allowedMethods())
-
-// 加载路由中间件
-// app.use(router.routes()).use(router.allowedMethods())
-
-// app.use( async ( ctx ) => {
-//   let url = ctx.request.url
-//   ctx.body = url
-// })
-app.listen(3000)
-console.log('[demo] start-quick is starting at port 3000')
-
-function getSynctime(){
-	return new Promise((resolve,reject)=>{
-		try{
-			let startTime = new Date().getTime()
-			setTimeout(()=>{
-				let endTime = new Date().getTime()
-				let data = endTime-startTime
-				resolve(data)
-			},1000)
-		}catch(err){
-			reject(err)
-		}
-	})
+// session存储配置
+const sessionMysqlConfig = {
+    user: config.database.USERNAME,
+    password: config.database.PASSWORD,
+    database: config.database.DATABASE,
+    host: config.database.HOST,
 }
 
-async function getSyncData(){
-	let time = await getSynctime()
-	let data = `endTime - startTime = ${time}`
-	return data
-	// console.log(time)
-}
-async function getData(){
-	let data = await getSyncData()
-	console.log(data)
-}
-// getSyncData()
-getData()
+// 配置session中间件
+app.use(session({
+    key: 'USER_SID',
+    store: new MysqlStore(sessionMysqlConfig)
+}))
+
+
+// 配置静态资源加载中间件
+// app.use(koaStatic(
+//   path.join(__dirname , './public')
+// ))
+// 缓存
+app.use(staticCache(path.join(__dirname, './public'), { dynamic: true }, {
+    maxAge: 365 * 24 * 60 * 60
+}))
+app.use(staticCache(path.join(__dirname, './images'), { dynamic: true }, {
+    maxAge: 365 * 24 * 60 * 60
+}))
+
+// 配置服务端模板渲染引擎中间件
+// app.use(views(path.join(__dirname, './views'), {
+//   extension: 'ejs'
+// }))
+app.use(bodyParser({
+    formLimit: '1mb'
+}))
+
+//  路由(我们先注释三个，等后面添加好了再取消注释，因为我们还没有定义路由，稍后会先实现注册)
+//app.use(require('./routers/signin.js').routes())
+// app.use(require('./routers/signup.js').routes())
+//app.use(require('./routers/posts.js').routes())
+//app.use(require('./routers/signout.js').routes())
+
+
+app.listen(`${config.port}`)
+
+console.log(`listening on port ${config.port}`)
