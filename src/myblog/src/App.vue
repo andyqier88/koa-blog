@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <img src="./assets/logo.png"> -->
-    <header-div :logso = "logoMsg"></header-div>
+    <header-div :logso = "logoMsg" v-on:listenToChlid="getMessage"></header-div>
     <hello-world>{{logoMsg}}</hello-world>
   </div>
 </template>
@@ -20,17 +20,22 @@ export default {
   components:{
     HeaderDiv,
     HelloWorld
+  },
+  methods:{
+    getMessage:function(data){
+      console.log(data)
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
 </style>
