@@ -1,13 +1,12 @@
 <template>
   <div id="app">
     <!-- <img src="./assets/logo.png"> -->
-    <header-div :logso = "logoMsg" v-on:listenToChlid="getMessage"></header-div>
+    <header-div :logso = "logoMsg" :listenToChlid="getMessage"></header-div>
     <hello-world>{{logoMsg}}</hello-world>
   </div>
 </template>
 
 <script>
-
 import HeaderDiv from './components/HeaderDiv'
 import HelloWorld from './components/HelloWorld'
 export default {
