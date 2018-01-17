@@ -5,21 +5,16 @@
 </template>
 
 <script>
-  export default {
-    name: 'common',
-    data (){
-      return {
-      }
-    },
-    methods:{
-      sendMessage:{
-        
-      }
+
+export default {
+  name: 'common',
+  data () {
+    return {
     }
   }
+}
 </script>
 
 <style>
-  
-</style>
 
+</style>

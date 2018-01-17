@@ -7,22 +7,22 @@
 </template>
 
 <script>
-/* eslint-disable */
+
 import HeaderDiv from './components/HeaderDiv'
 import HelloWorld from './components/HelloWorld'
 export default {
   name: 'App',
-  data(){
+  data () {
     return {
-      logoMsg:'test'
+      logoMsg: 'test'
     }
   },
-  components:{
+  components: {
     HeaderDiv,
     HelloWorld
   },
-  methods:{
-    getMessage:function(data){
+  methods: {
+    getMessage: function (data) {
       console.log(data)
     }
   }
